@@ -32,6 +32,7 @@ public class RunReduceSpeedAtSelectedLinks {
             if (listOfLinks.contains(link.getId().toString()) && link.getFreespeed() < 50 / 3.6){
 
                 link.setFreespeed(20/3.6);
+
             }
         }
         
