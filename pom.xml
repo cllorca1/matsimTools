@@ -51,6 +51,16 @@
             <scope>compile</scope>
         </dependency>
 
+
+        <dependency>
+            <groupId>com.github.SchweizerischeBundesbahnen</groupId>
+            <artifactId>matsim-sbb-extensions</artifactId>
+            <version>master-SNAPSHOT</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+
+
     </dependencies>
 
     <properties>

@@ -44,8 +44,15 @@ public class AssignHbefaRoadTypes {
 
         outputFile = args[1];
 
+
+        processLinks(args, upperFolder);
+
+
+    }
+
+    private static void processLinks(String[] args, String upperFolder) {
         for (int i = 1; i < args.length; i++){
-            String networkFile = upperFolder + args[i] + "/matsim/2040/2040.output_network_2.xml.gz";
+            String networkFile = upperFolder + args[i] + "/matsim/2050/2050.output_network_2.xml.gz";
             Config config = ConfigUtils.createConfig();
             config.network().setInputFile(networkFile);
             Scenario scenario = ScenarioUtils.loadScenario(config);
@@ -55,12 +62,30 @@ public class AssignHbefaRoadTypes {
                 link.getAttributes().putAttribute("hbefa_road_type", getHbefaType(link));
             }
 
+            networkFile = upperFolder + args[i] + "/matsim/2050/2050.output_network_2.xml.gz";
             new NetworkWriter(network).write(networkFile);
         }
-
-
-
     }
+
+    private static void processLinksMunich(String[] args, String upperFolder) {
+        for (int i = 1; i < args.length; i++){
+            String networkFile = upperFolder + args[i] + "/matsim/2050/2050.output_network.xml.gz";
+            Config config = ConfigUtils.createConfig();
+            config.network().setInputFile(networkFile);
+            Scenario scenario = ScenarioUtils.loadScenario(config);
+            Network network = scenario.getNetwork();
+
+            for (Link link : network.getLinks().values()) {
+                if (!link.getAllowedModes().contains("pt")){
+                    link.getAttributes().putAttribute("hbefa_road_type", getHbefaType(link));
+                }
+            }
+
+            networkFile = upperFolder + args[i] + "/matsim/2050/2050.output_network_2.xml.gz";
+            new NetworkWriter(network).write(networkFile);
+        }
+    }
+
 
     public static String getHbefaType(Link link) {
 

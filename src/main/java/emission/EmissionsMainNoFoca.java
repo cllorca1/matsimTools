@@ -11,15 +11,18 @@ public class EmissionsMainNoFoca {
 
         for (int i = 1; i < args.length; i++) {
 
-            String eventFileWithoutEmissions = upperFolder + args[i] + "/matsim/2040/2040.output_events.xml.gz";
-            String eventFileWithEmissions = upperFolder + args[i] + "/matsim/2040/2040.output_events_2.xml.gz";
-            String individualVehicleFile = upperFolder + args[i] + "/matsim/2040/vehicles_2.xml.gz";
-            String populationFile = upperFolder + args[i] + "/matsim/2040/2040.output_plans.xml.gz";
-            String networkFile = upperFolder + args[i] + "/matsim/2040/2040.output_network_2.xml.gz";
+            String year = "2010";
+            String yearNetwork = "2050";
 
-            String linkWarmEmissionFile = upperFolder + args[i] + "/matsim/2040/linkWarmEmissionFile.csv";
-            String vehicleWarmEmissionFile = upperFolder + args[i] + "/matsim/2040/vehicleWarmEmissionFile.csv";
-            String vehicleColdEmissionFile = upperFolder + args[i] + "/matsim/2040/vehicleColdEmissionFile.csv";
+            String eventFileWithoutEmissions = upperFolder + args[i] + "/matsim/" + year + "/" + year + ".output_events.xml.gz";
+            String eventFileWithEmissions = upperFolder + args[i] + "/matsim/" + year + "/" + year + ".output_events_2.xml.gz";
+            String individualVehicleFile = upperFolder + args[i] + "/matsim/" + year + "/vehicles_2.xml.gz";
+            String populationFile = upperFolder + args[i] + "/matsim/" + year + "/" + year + ".output_plans.xml.gz";
+            String networkFile = upperFolder + args[i] + "/matsim/" + yearNetwork + "/" + yearNetwork + ".output_network_2.xml.gz";
+
+            String linkWarmEmissionFile = upperFolder + args[i] + "/matsim/" + year + "/linkWarmEmissionFile.csv";
+            String vehicleWarmEmissionFile = upperFolder + args[i] + "/matsim/" + year + "/vehicleWarmEmissionFile.csv";
+            String vehicleColdEmissionFile = upperFolder + args[i] + "/matsim/" + year + "/vehicleColdEmissionFile.csv";
 
             CreateVehicles createVehicles = new CreateVehicles();
             createVehicles.run(eventFileWithoutEmissions, individualVehicleFile);

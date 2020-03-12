@@ -10,7 +10,7 @@ public class RunReduceSpeedLimitOverall {
 
         for (Link link : network.getLinks().values()){
 
-            if (link.getFreespeed() > 70 / 3.6){
+            if (link.getFreespeed() > 70 / 3.6 && !link.getAllowedModes().contains("pt")){
 
                 link.setFreespeed(70/3.6);
             }

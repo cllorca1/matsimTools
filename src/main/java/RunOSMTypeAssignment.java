@@ -17,11 +17,11 @@ public class RunOSMTypeAssignment {
         String upperFolder = args[0];
 
         RunOSMTypeAssignment rota = new RunOSMTypeAssignment();
-        Map<String, String> linkMap = rota.readOSMDataAsTable(upperFolder + args[1]);
+        Map<String, String> linkMap = rota.readOSMDataAsTable(args[1]);
 
         for (int i = 2; i < args.length; i++) {
 
-            String networkFile = upperFolder + args[i] + "/matsim/2040/2040.output_network.xml.gz";
+            String networkFile = upperFolder + args[i] + "/matsim/2050/2050.output_network.xml.gz";
             Network network = NetworkUtils.readNetwork(networkFile);
             for (Link link : network.getLinks().values()) {
                 String id = link.getId().toString().split("_")[0];
@@ -32,7 +32,7 @@ public class RunOSMTypeAssignment {
                     link.getAttributes().putAttribute("type", type);
                 }
             }
-            networkFile = upperFolder + args[i] + "/matsim/2040/2040.output_network_2.xml.gz";
+            networkFile = upperFolder + args[i] + "/matsim/2050/2050.output_network_2.xml.gz";
             NetworkUtils.writeNetwork(network, networkFile);
         }
     }

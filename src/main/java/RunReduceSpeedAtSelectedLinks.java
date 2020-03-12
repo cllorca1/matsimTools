@@ -29,7 +29,7 @@ public class RunReduceSpeedAtSelectedLinks {
 
         for (Link link : network.getLinks().values()){
 
-            if (listOfLinks.contains(link.getId().toString()) && link.getFreespeed() < 50 / 3.6){
+            if (listOfLinks.contains(link.getId().toString()) && link.getFreespeed() < 55 / 3.6 && !link.getAllowedModes().contains("pt")){
 
                 link.setFreespeed(20/3.6);
 
