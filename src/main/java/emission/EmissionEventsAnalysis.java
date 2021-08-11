@@ -39,9 +39,7 @@ public class EmissionEventsAnalysis {
         selectedPollutants.add(Pollutant.HC);
     }
 
-    public void run(String configFile,
-                    String outDirectory,
-                    String eventsFileWithEmission,
+    public void run(String eventsFileWithEmission,
                     String individualVehicleFile,
                     String populationFile,
                     String networkFile,
@@ -49,8 +47,8 @@ public class EmissionEventsAnalysis {
                     String vehicleWarmEmissionFile,
                     String vehicleColdEmissionFile,
                     String efaWarmFile, String efaHotFile) throws FileNotFoundException {
-        config = ConfigUtils.loadConfig(configFile, new EmissionsConfigGroup());
-        config.controler().setOutputDirectory(outDirectory);
+        config = ConfigUtils.createConfig(new EmissionsConfigGroup());
+        config.controler().setOutputDirectory("");
         config.vehicles().setVehiclesFile(individualVehicleFile);
         config.network().setInputFile(networkFile);
         config.plans().setInputFile(populationFile);
@@ -59,6 +57,7 @@ public class EmissionEventsAnalysis {
 
         EmissionsConfigGroup ecg = ConfigUtils.addOrGetModule(this.config, EmissionsConfigGroup.class);
         ecg.setDetailedVsAverageLookupBehavior(EmissionsConfigGroup.DetailedVsAverageLookupBehavior.directlyTryAverageTable);
+        ecg.setHbefaRoadTypeSource(EmissionsConfigGroup.HbefaRoadTypeSource.fromLinkAttributes);
         ecg.setHbefaVehicleDescriptionSource(EmissionsConfigGroup.HbefaVehicleDescriptionSource.fromVehicleTypeDescription);
         ecg.setHandlesHighAverageSpeeds(true);
         ecg.setAverageColdEmissionFactorsFile(efaWarmFile);

@@ -27,11 +27,11 @@ public class OfflineEmissionAnalysis {
     // =======================================================================================================
 
 
-    public void run(String configFile, String outDirectory, String eventsFileWithoutEmissions, String eventsFileWithEmission,
+    public void run(String eventsFileWithoutEmissions, String eventsFileWithEmission,
                     String individualVehicleFile, String populationFile, String networkFile, String coldEmissionFile, String warmEmissionFile) {
 
-        config = ConfigUtils.loadConfig(configFile, new EmissionsConfigGroup());
-        config.controler().setOutputDirectory(outDirectory);
+        config = ConfigUtils.createConfig(new EmissionsConfigGroup());
+        config.controler().setOutputDirectory("");
         config.vehicles().setVehiclesFile(individualVehicleFile);
         config.network().setInputFile(networkFile);
         config.plans().setInputFile(populationFile);
@@ -39,6 +39,7 @@ public class OfflineEmissionAnalysis {
 
 
         EmissionsConfigGroup ecg = ConfigUtils.addOrGetModule(this.config, EmissionsConfigGroup.class);
+        ecg.setHbefaRoadTypeSource(EmissionsConfigGroup.HbefaRoadTypeSource.fromLinkAttributes);
         ecg.setDetailedVsAverageLookupBehavior(EmissionsConfigGroup.DetailedVsAverageLookupBehavior.directlyTryAverageTable);
         ecg.setHbefaVehicleDescriptionSource(EmissionsConfigGroup.HbefaVehicleDescriptionSource.fromVehicleTypeDescription);
         ecg.setHandlesHighAverageSpeeds(true);
@@ -58,11 +59,11 @@ public class OfflineEmissionAnalysis {
         com.google.inject.Injector injector = Injector.createInjector(this.config, new AbstractModule[]{module});
         EmissionModule emissionModule = injector.getInstance(EmissionModule.class);
 
-        EventWriterXML emissionEventWriter = new EventWriterXML(outDirectory + eventsFileWithEmission);
+        EventWriterXML emissionEventWriter = new EventWriterXML(eventsFileWithEmission);
         emissionModule.getEmissionEventsManager().addHandler(emissionEventWriter);
         eventsManager.initProcessing();
         MatsimEventsReader matsimEventsReader = new MatsimEventsReader(eventsManager);
-        matsimEventsReader.readFile(outDirectory + eventsFileWithoutEmissions);
+        matsimEventsReader.readFile(eventsFileWithoutEmissions);
         eventsManager.finishProcessing();
         emissionEventWriter.closeFile();
     }

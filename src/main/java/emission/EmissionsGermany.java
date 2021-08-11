@@ -29,9 +29,7 @@ public class EmissionsGermany {
         createVehicles.run(eventFileWithoutEmissions, individualVehicleFile);
 
         OfflineEmissionAnalysis offlineEmissionAnalysis = new OfflineEmissionAnalysis();
-        offlineEmissionAnalysis.run(configFile,
-                "",
-                eventFileWithoutEmissions,
+        offlineEmissionAnalysis.run(eventFileWithoutEmissions,
                 eventFileWithEmissions,
                 individualVehicleFile,
                 populationFile,
@@ -40,9 +38,7 @@ public class EmissionsGermany {
                 warmEmissionEfaFile);
 
         EmissionEventsAnalysis emissionEventsAnalysis = new EmissionEventsAnalysis();
-        emissionEventsAnalysis.run(configFile,
-                "",
-                eventFileWithEmissions,
+        emissionEventsAnalysis.run(eventFileWithEmissions,
                 individualVehicleFile,
                 populationFile,
                 networkFile,
