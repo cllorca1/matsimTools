@@ -5,6 +5,7 @@ import org.matsim.contrib.emissions.EmissionModule;
 import org.matsim.contrib.emissions.utils.EmissionsConfigGroup;
 import org.matsim.core.api.experimental.events.EventsManager;
 import org.matsim.core.config.Config;
+import org.matsim.core.config.ConfigGroup;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.controler.AbstractModule;
 import org.matsim.core.controler.Injector;
@@ -27,34 +28,43 @@ public class OfflineEmissionAnalysis {
 
 
     public void run(String configFile, String outDirectory, String eventsFileWithoutEmissions, String eventsFileWithEmission,
-                    String individualVehicleFile, String populationFile, String networkFile) {
-        if ( config==null ) {
-            this.prepareConfig(configFile, outDirectory, individualVehicleFile, networkFile, populationFile) ;
-        }
-        final Scenario scenario = ScenarioUtils.loadScenario(config);
+                    String individualVehicleFile, String populationFile, String networkFile, String coldEmissionFile, String warmEmissionFile) {
+
+        config = ConfigUtils.loadConfig(configFile, new EmissionsConfigGroup());
+        config.controler().setOutputDirectory(outDirectory);
+        config.vehicles().setVehiclesFile(individualVehicleFile);
+        config.network().setInputFile(networkFile);
+        config.plans().setInputFile(populationFile);
+
+
+
+        EmissionsConfigGroup ecg = ConfigUtils.addOrGetModule(this.config, EmissionsConfigGroup.class);
+        ecg.setDetailedVsAverageLookupBehavior(EmissionsConfigGroup.DetailedVsAverageLookupBehavior.directlyTryAverageTable);
+        ecg.setHbefaVehicleDescriptionSource(EmissionsConfigGroup.HbefaVehicleDescriptionSource.fromVehicleTypeDescription);
+        ecg.setHandlesHighAverageSpeeds(true);
+        ecg.setAverageColdEmissionFactorsFile(coldEmissionFile);
+        ecg.setAverageWarmEmissionFactorsFile(warmEmissionFile);
+
+        final Scenario scenario = ScenarioUtils.loadScenario(this.config);
         final EventsManager eventsManager = EventsUtils.createEventsManager();
 
-        AbstractModule module = new AbstractModule(){
-            @Override
-            public void install(){
-                bind( Scenario.class ).toInstance( scenario );
-                bind( EventsManager.class ).toInstance( eventsManager );
-                bind( EmissionModule.class ) ;
+        AbstractModule module = new AbstractModule() {
+            public void install() {
+                this.bind(Scenario.class).toInstance(scenario);
+                this.bind(EventsManager.class).toInstance(eventsManager);
+                this.bind(EmissionModule.class);
             }
         };
-
-        com.google.inject.Injector injector = Injector.createInjector(config, module);
-
+        com.google.inject.Injector injector = Injector.createInjector(this.config, new AbstractModule[]{module});
         EmissionModule emissionModule = injector.getInstance(EmissionModule.class);
 
-        EventWriterXML emissionEventWriter = new EventWriterXML(eventsFileWithEmission);
+        EventWriterXML emissionEventWriter = new EventWriterXML(outDirectory + eventsFileWithEmission);
         emissionModule.getEmissionEventsManager().addHandler(emissionEventWriter);
-
+        eventsManager.initProcessing();
         MatsimEventsReader matsimEventsReader = new MatsimEventsReader(eventsManager);
-        matsimEventsReader.readFile(eventsFileWithoutEmissions);
-
+        matsimEventsReader.readFile(outDirectory + eventsFileWithoutEmissions);
+        eventsManager.finishProcessing();
         emissionEventWriter.closeFile();
-
     }
 
 

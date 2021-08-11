@@ -3,11 +3,11 @@ package emission;
 
 import emission.data.AnalyzedLink;
 import emission.data.AnalyzedVehicle;
-import emission.data.Pollutant;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.network.Link;
 import org.matsim.contrib.emissions.EmissionModule;
+import org.matsim.contrib.emissions.Pollutant;
 import org.matsim.contrib.emissions.utils.EmissionsConfigGroup;
 import org.matsim.core.api.experimental.events.EventsManager;
 import org.matsim.core.config.Config;
@@ -22,11 +22,22 @@ import org.matsim.vehicles.Vehicle;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class EmissionEventsAnalysis {
 
     public Config config;
+    final static Set<Pollutant> selectedPollutants = new HashSet<>();;
+
+    public EmissionEventsAnalysis() {
+        selectedPollutants.add(Pollutant.CO2_TOTAL);
+        selectedPollutants.add(Pollutant.CO);
+        selectedPollutants.add(Pollutant.NOx);
+        selectedPollutants.add(Pollutant.PM);
+        selectedPollutants.add(Pollutant.HC);
+    }
 
     public void run(String configFile,
                     String outDirectory,
@@ -36,35 +47,37 @@ public class EmissionEventsAnalysis {
                     String networkFile,
                     String linkWarmEmissionFile,
                     String vehicleWarmEmissionFile,
-                    String vehicleColdEmissionFile) throws FileNotFoundException {
-        if (config == null) {
-            this.prepareConfig(configFile, outDirectory, individualVehicleFile, networkFile, populationFile) ;
-        }
+                    String vehicleColdEmissionFile,
+                    String efaWarmFile, String efaHotFile) throws FileNotFoundException {
+        config = ConfigUtils.loadConfig(configFile, new EmissionsConfigGroup());
+        config.controler().setOutputDirectory(outDirectory);
+        config.vehicles().setVehiclesFile(individualVehicleFile);
+        config.network().setInputFile(networkFile);
+        config.plans().setInputFile(populationFile);
 
 
-        Scenario scenario = ScenarioUtils.loadScenario(config);
 
-        EventsManager eventsManager = EventsUtils.createEventsManager();
-
+        EmissionsConfigGroup ecg = ConfigUtils.addOrGetModule(this.config, EmissionsConfigGroup.class);
+        ecg.setDetailedVsAverageLookupBehavior(EmissionsConfigGroup.DetailedVsAverageLookupBehavior.directlyTryAverageTable);
+        ecg.setHbefaVehicleDescriptionSource(EmissionsConfigGroup.HbefaVehicleDescriptionSource.fromVehicleTypeDescription);
+        ecg.setHandlesHighAverageSpeeds(true);
+        ecg.setAverageColdEmissionFactorsFile(efaWarmFile);
+        ecg.setAverageWarmEmissionFactorsFile(efaHotFile);
+        final Scenario scenario = ScenarioUtils.loadScenario(this.config);
+        final EventsManager eventsManager = EventsUtils.createEventsManager();
 
         AbstractModule module = new AbstractModule() {
-            @Override
             public void install() {
-                bind(Scenario.class).toInstance(scenario);
-                bind(EventsManager.class).toInstance(eventsManager);
-                bind(EmissionModule.class);
+                this.bind(Scenario.class).toInstance(scenario);
+                this.bind(EventsManager.class).toInstance(eventsManager);
+                this.bind(EmissionModule.class);
             }
         };
-
-        com.google.inject.Injector injector = Injector.createInjector(config, module);
-
+        com.google.inject.Injector injector = Injector.createInjector(this.config, new AbstractModule[]{module});
         EmissionModule emissionModule = injector.getInstance(EmissionModule.class);
 
-
         LinkEmissionHandler linkEmissionHandler = new LinkEmissionHandler(scenario.getNetwork());
-        emissionModule.getEmissionEventsManager().
-
-                addHandler(linkEmissionHandler);
+        emissionModule.getEmissionEventsManager().addHandler(linkEmissionHandler);
 
         MatsimEventsReader matsimEventsReader = new MatsimEventsReader(eventsManager);
         matsimEventsReader.readFile(eventsFileWithEmission);
@@ -80,7 +93,7 @@ public class EmissionEventsAnalysis {
 
     }
 
-    private static void printOutVehicleWarmEmissions(String fileName,
+    private void printOutVehicleWarmEmissions(String fileName,
                                                      Map<Id<Vehicle>, AnalyzedVehicle> analyzedVehicles,
                                                      boolean warm) throws FileNotFoundException {
 
@@ -88,7 +101,9 @@ public class EmissionEventsAnalysis {
 
         StringBuilder header = new StringBuilder();
         header.append("id,distance,startTime,endTime,operatingTime");
-        for (Pollutant pollutant : Pollutant.values()) {
+
+
+        for (Pollutant pollutant : selectedPollutants) {
             header.append(",").append(pollutant.toString());
         }
         pw.println(header);
@@ -101,7 +116,7 @@ public class EmissionEventsAnalysis {
             sb.append(",").append(vehicle.getEndTime());
             sb.append(",").append(vehicle.getOperatingTime());
 
-            for (Pollutant pollutant : Pollutant.values()) {
+            for (Pollutant pollutant : selectedPollutants) {
                 if (warm) {
                     sb.append(",").append(vehicle.getWarmEmissions().get(pollutant.toString()));
                 } else {
@@ -117,7 +132,7 @@ public class EmissionEventsAnalysis {
 
     }
 
-    private static void printOutLinkWarmEmissions(String fileName,
+    private void printOutLinkWarmEmissions(String fileName,
                                                   Map<Id<Link>, AnalyzedLink> analyzedLinks,
                                                   boolean warm) throws FileNotFoundException {
 
@@ -125,7 +140,7 @@ public class EmissionEventsAnalysis {
 
         StringBuilder header = new StringBuilder();
         header.append("link,length");
-        for (Pollutant pollutant : Pollutant.values()) {
+        for (Pollutant pollutant : selectedPollutants) {
             header.append(",").append(pollutant.toString());
         }
         pw.println(header);
@@ -135,7 +150,7 @@ public class EmissionEventsAnalysis {
             sb.append(link.getId().toString()).append(",");
             sb.append(link.getMatsimLink().getLength());
 
-            for (Pollutant pollutant : Pollutant.values()) {
+            for (Pollutant pollutant : selectedPollutants) {
                 if (warm) {
                     sb.append(",").append(link.getWarmEmissions().get(pollutant.toString()));
                 } else {

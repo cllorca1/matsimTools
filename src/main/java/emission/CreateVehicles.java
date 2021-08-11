@@ -69,29 +69,26 @@ public class CreateVehicles {
 
             logger.info("Found " + listOfIds.size() + " different agents. Assign vehicle types according to their id.");
 
+            int hgvCounter = 0;
+            int pcCounter = 0;
+
             for (Id<Vehicle> vehicleId : listOfIds) {
                 String id = vehicleId.toString();
                 Id<Vehicle> vehId = Id.createVehicleId(id);
                 Vehicle vehicle;
 
-                if(id.contains("LD")){
+                if(id.contains("_t")){
                     vehicle = VehicleUtils.getFactory().createVehicle(vehId, vehicles.getVehicleTypes().get(Id.create("HGV", VehicleType.class)));
                     vehicles.addVehicle(vehicle);
-                } else if (id.contains("SD")){
-                    vehicle = VehicleUtils.getFactory().createVehicle(vehId, vehicles.getVehicleTypes().get(Id.create("HGV", VehicleType.class)));
-                    vehicles.addVehicle(vehicle);
-                } else if (id.contains("van")){
-                    vehicle = VehicleUtils.getFactory().createVehicle(vehId, vehicles.getVehicleTypes().get(Id.create("HGV", VehicleType.class)));
-                    vehicles.addVehicle(vehicle);
-                } else if (id.contains("cargoBike")){
-                    vehicle = VehicleUtils.getFactory().createVehicle(vehId, vehicles.getVehicleTypes().get(Id.create("ZERO_EMISSION_VEHICLE", VehicleType.class)));
-                    vehicles.addVehicle(vehicle);
+                    hgvCounter++;
                 } else {
                     vehicle = VehicleUtils.getFactory().createVehicle(vehId, vehicles.getVehicleTypes().get(Id.create("pass. car", VehicleType.class)));
                     vehicles.addVehicle(vehicle);
+                    pcCounter++;
                 }
             }
 
-            new VehicleWriterV1(vehicles).writeFile(vehicleFile);
+            logger.info("Found " + hgvCounter + " trucks and " + pcCounter + " cars.");
+            new MatsimVehicleWriter(vehicles).writeFile(vehicleFile);
         }
 }

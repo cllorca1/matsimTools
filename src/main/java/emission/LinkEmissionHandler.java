@@ -101,24 +101,24 @@ public class LinkEmissionHandler implements WarmEmissionEventHandler, ColdEmissi
         }
 
 
-        if (emmisionsByLink.get(linkId).getWarmEmissions().isEmpty()){
-            emmisionsByLink.get(linkId).getWarmEmissions().putAll(coldEmissions);
+        if (emmisionsByLink.get(linkId).getColdEmissions().isEmpty()){
+            emmisionsByLink.get(linkId).getColdEmissions().putAll(coldEmissions);
         } else {
-            Map<String, Double> currentEmissions = emmisionsByLink.get(linkId).getWarmEmissions();
+            Map<String, Double> currentEmissions = emmisionsByLink.get(linkId).getColdEmissions();
             for (String pollutant : currentEmissions.keySet()){
                 currentEmissions.put(pollutant, currentEmissions.get(pollutant) + coldEmissions.get(pollutant));
             }
-            emmisionsByLink.get(linkId).getWarmEmissions().putAll(currentEmissions);
+            emmisionsByLink.get(linkId).getColdEmissions().putAll(currentEmissions);
         }
 
         Id<Vehicle> vehicleId = event.getVehicleId();
         emmisionsByVehicle.putIfAbsent(vehicleId, new AnalyzedVehicle(vehicleId));
         emmisionsByVehicle.get(vehicleId).registerPointOfTime(event.getTime());
 
-        if (emmisionsByVehicle.get(vehicleId).getWarmEmissions().isEmpty()){
-            emmisionsByVehicle.get(vehicleId).getWarmEmissions().putAll(coldEmissions);
+        if (emmisionsByVehicle.get(vehicleId).getColdEmissions().isEmpty()){
+            emmisionsByVehicle.get(vehicleId).getColdEmissions().putAll(coldEmissions);
         } else {
-            Map<String, Double> currentEmissions = emmisionsByVehicle.get(vehicleId).getWarmEmissions();
+            Map<String, Double> currentEmissions = emmisionsByVehicle.get(vehicleId).getColdEmissions();
             for (String pollutant : currentEmissions.keySet()){
                 currentEmissions.put(pollutant, currentEmissions.get(pollutant) +coldEmissions.get(pollutant));
             }
