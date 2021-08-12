@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <!-- Define custom levels before using them for filtering below. -->
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d %-7level %logger{36} - %msg%n"/>
+            <LevelRangeFilter minLevel="WARN" maxLevel="WARN" onMatch="DENY" onMismatch="NEUTRAL"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Root level="trace">
+            <!-- Only events at DIAG level or more specific are sent to the console. -->
+            <AppenderRef ref="Console" level="info" />
+
+        </Root>
+    </Loggers>
+
+</Configuration>

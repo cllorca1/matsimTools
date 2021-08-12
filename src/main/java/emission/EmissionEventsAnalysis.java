@@ -19,6 +19,7 @@ import org.matsim.core.events.MatsimEventsReader;
 import org.matsim.core.scenario.ScenarioUtils;
 import org.matsim.vehicles.Vehicle;
 
+import java.beans.EventHandler;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;

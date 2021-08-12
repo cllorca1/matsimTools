@@ -6,12 +6,12 @@ public class EmissionsGermany {
 
     public static void main(String[] args) throws FileNotFoundException {
 
+        long time = System.currentTimeMillis();
 
         String inputFolder = "Z:/projects/2019/BASt/data/input_files_matsim/emissions_noise/";
         //String matsimRunFolder = "Z:/projects/2019/BASt/data/results/matsim/base_210712";
         String matsimRunFolder = "F:\\matsim_germany\\output\\toll_test_20210611";
 
-        String configFile = inputFolder + "config_average.xml";
         String coldEmissionEfaFile = inputFolder + "EFA_ColdStart_Vehcat_EFA_COLD_VehCat_3.txt";
         String warmEmissionEfaFile = inputFolder + "EFA_HOT_Vehcat_EFA_HOT_VehCat_3.txt";
 
@@ -47,5 +47,11 @@ public class EmissionsGermany {
                 vehicleColdEmissionFile,
                 coldEmissionEfaFile,
                 warmEmissionEfaFile);
+
+        long endTime = System.currentTimeMillis();
+        double minutes =  (endTime - time)/1000./60.;
+
+        System.out.println("Runtime = " + minutes);
+
     }
 }
