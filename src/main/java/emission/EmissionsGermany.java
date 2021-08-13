@@ -9,8 +9,10 @@ public class EmissionsGermany {
         long time = System.currentTimeMillis();
 
         String inputFolder = "Z:/projects/2019/BASt/data/input_files_matsim/emissions_noise/";
+        String matsimRunFolder = "F:\\matsim_germany\\output\\base_seed_1";
+        //String matsimRunFolder = "F:\\matsim_germany\\output\\toll_test_20210611";
         //String matsimRunFolder = "Z:/projects/2019/BASt/data/results/matsim/base_210712";
-        String matsimRunFolder = "F:\\matsim_germany\\output\\toll_test_20210611";
+
 
         String coldEmissionEfaFile = inputFolder + "EFA_ColdStart_Vehcat_EFA_COLD_VehCat_3.txt";
         String warmEmissionEfaFile = inputFolder + "EFA_HOT_Vehcat_EFA_HOT_VehCat_3.txt";
@@ -21,9 +23,9 @@ public class EmissionsGermany {
 
         String eventFileWithEmissions = matsimRunFolder + "all.output_events_emissions.xml.gz";
         String individualVehicleFile = matsimRunFolder + "/all.output_vehicles.xml.gz";
-        String linkWarmEmissionFile = matsimRunFolder + "/linkWarmEmissionFile.csv";
-        String vehicleWarmEmissionFile = matsimRunFolder + "/vehicleWarmEmissionFile.csv";
-        String vehicleColdEmissionFile = matsimRunFolder + "/vehicleColdEmissionFile.csv";
+        String linkWarmEmissionFile = matsimRunFolder + "/linkWarmEmissionFile_c.csv";
+        String vehicleWarmEmissionFile = matsimRunFolder + "/vehicleWarmEmissionFile_c.csv";
+        String vehicleColdEmissionFile = matsimRunFolder + "/vehicleColdEmissionFile_c.csv";
 
         CreateVehicles createVehicles = new CreateVehicles();
         createVehicles.run(eventFileWithoutEmissions, individualVehicleFile);

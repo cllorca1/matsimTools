@@ -88,8 +88,8 @@ public class EmissionEventsAnalysis {
 
         printOutLinkWarmEmissions(linkWarmEmissionFile, analyzedLinks, true);
 
-        printOutVehicleWarmEmissions(vehicleWarmEmissionFile, analyzedVehicles, true);
-        printOutVehicleWarmEmissions(vehicleColdEmissionFile, analyzedVehicles, false);
+//        printOutVehicleWarmEmissions(vehicleWarmEmissionFile, analyzedVehicles, true);
+//        printOutVehicleWarmEmissions(vehicleColdEmissionFile, analyzedVehicles, false);
 
     }
 
