@@ -9,9 +9,10 @@ public class EmissionsGermany {
         long time = System.currentTimeMillis();
 
         String inputFolder = "Z:/projects/2019/BASt/data/input_files_matsim/emissions_noise/";
-        String matsimRunFolder = "F:\\matsim_germany\\output\\base_seed_1";
+        //String matsimRunFolder = "F:\\matsim_germany\\output\\base_seed_1";
         //String matsimRunFolder = "F:\\matsim_germany\\output\\toll_test_20210611";
         //String matsimRunFolder = "Z:/projects/2019/BASt/data/results/matsim/base_210712";
+        String matsimRunFolder = "E:/bast_emission_run/toll_test_20210611";
 
 
         String coldEmissionEfaFile = inputFolder + "EFA_ColdStart_Vehcat_EFA_COLD_VehCat_3.txt";
@@ -26,19 +27,20 @@ public class EmissionsGermany {
         String linkWarmEmissionFile = matsimRunFolder + "/linkWarmEmissionFile_c.csv";
         String vehicleWarmEmissionFile = matsimRunFolder + "/vehicleWarmEmissionFile_c.csv";
         String vehicleColdEmissionFile = matsimRunFolder + "/vehicleColdEmissionFile_c.csv";
+        String warmEmissionSummary = matsimRunFolder + "/warmEmissionSummary_c.csv";
 
-        CreateVehicles createVehicles = new CreateVehicles();
-        createVehicles.run(eventFileWithoutEmissions, individualVehicleFile);
+        //CreateVehicles createVehicles = new CreateVehicles();
+        //createVehicles.run(eventFileWithoutEmissions, individualVehicleFile);
 
-        OfflineEmissionAnalysis offlineEmissionAnalysis = new OfflineEmissionAnalysis();
-        offlineEmissionAnalysis.run(eventFileWithoutEmissions,
-                eventFileWithEmissions,
+        //OfflineEmissionAnalysis offlineEmissionAnalysis = new OfflineEmissionAnalysis();
+        //offlineEmissionAnalysis.run(eventFileWithoutEmissions,
+                /*eventFileWithEmissions,
                 individualVehicleFile,
                 populationFile,
                 networkFile,
                 coldEmissionEfaFile,
                 warmEmissionEfaFile);
-
+*/
         EmissionEventsAnalysis emissionEventsAnalysis = new EmissionEventsAnalysis();
         emissionEventsAnalysis.run(eventFileWithEmissions,
                 individualVehicleFile,
@@ -47,6 +49,7 @@ public class EmissionsGermany {
                 linkWarmEmissionFile,
                 vehicleWarmEmissionFile,
                 vehicleColdEmissionFile,
+                warmEmissionSummary,
                 coldEmissionEfaFile,
                 warmEmissionEfaFile);
 
